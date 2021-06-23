@@ -1,0 +1,51 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2021-06-23 22:04:55.760952",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "icon": "integration",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "F2G",
+ "links": [],
+ "modified": "2021-06-23 22:04:55.760952",
+ "modified_by": "Administrator",
+ "module": "F2G",
+ "name": "F2G",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "F2G Settings",
+   "link_to": "Furniture To Go Settings",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "F2G Products",
+   "link_to": "Furniture To Go Products",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "F2G Groups",
+   "link_to": "Furniture To Go Product Group",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "F2G Ranges",
+   "link_to": "Furniture To Go Range",
+   "type": "DocType"
+  }
+ ],
+ "shortcuts_label": "Furniture To Go"
+}
