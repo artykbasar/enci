@@ -109,23 +109,18 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"enci.tasks.all"
-# 	],
-# 	"daily": [
-# 		"enci.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"enci.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"enci.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"enci.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+
+	"all": [
+		# "enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.tester"
+	],
+	"daily": [],
+	"hourly": [
+		"enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.scheduled_sync"
+	],
+	"weekly": [],
+	"monthly": []
+}
 
 # Testing
 # -------

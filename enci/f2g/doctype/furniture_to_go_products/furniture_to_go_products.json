@@ -1,0 +1,277 @@
+{
+ "actions": [
+  {
+   "action": "pass",
+   "action_type": "Server Action",
+   "label": "Add To Stock"
+  }
+ ],
+ "autoname": "field:product_sku",
+ "creation": "2021-02-07 02:01:57.162153",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "product_name",
+  "product_sku",
+  "main_image",
+  "f2g_main_image",
+  "next_delivery",
+  "f2g_group",
+  "range_name",
+  "discontinued",
+  "column_break_12",
+  "hd_price",
+  "store_delivery_price",
+  "over_250",
+  "over_500",
+  "over_1000",
+  "over_2000",
+  "column_break_5",
+  "availability",
+  "stock_level",
+  "barcode",
+  "supplier_url",
+  "sb_product_files",
+  "product_images",
+  "product_attachments",
+  "sb_bullet_points",
+  "product_bullet_points",
+  "sb_box",
+  "box",
+  "description",
+  "add_to_stock"
+ ],
+ "fields": [
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Product Name",
+   "length": 250,
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_sku",
+   "fieldtype": "Data",
+   "label": "SKU",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "main_image",
+   "fieldtype": "Attach Image",
+   "label": "Main Image"
+  },
+  {
+   "fieldname": "f2g_main_image",
+   "fieldtype": "Attach Image",
+   "label": "F2G Main Image"
+  },
+  {
+   "fieldname": "next_delivery",
+   "fieldtype": "Date",
+   "label": "Next Delivery",
+   "read_only": 1
+  },
+  {
+   "fieldname": "f2g_group",
+   "fieldtype": "Link",
+   "label": "F2G Group",
+   "options": "Furniture To Go Product Group",
+   "read_only": 1
+  },
+  {
+   "fieldname": "range_name",
+   "fieldtype": "Link",
+   "label": "Range Name",
+   "options": "Furniture To Go Range",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "discontinued",
+   "fieldtype": "Check",
+   "label": "Discontinued"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "hd_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Home Delivery Price",
+   "precision": "2",
+   "read_only": 1,
+   "width": "1"
+  },
+  {
+   "fieldname": "store_delivery_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Store Delivery Price",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "over_250",
+   "fieldtype": "Currency",
+   "label": "Over 250 Price",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "over_500",
+   "fieldtype": "Currency",
+   "label": "Over 500 Price",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "over_1000",
+   "fieldtype": "Currency",
+   "label": "Over 1000 Price",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "over_2000",
+   "fieldtype": "Currency",
+   "label": "Over 2000 Price",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break",
+   "print_hide": 1
+  },
+  {
+   "fieldname": "availability",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Availability",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stock_level",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Stock Level",
+   "read_only": 1
+  },
+  {
+   "fieldname": "barcode",
+   "fieldtype": "Barcode",
+   "label": "Barcode"
+  },
+  {
+   "fieldname": "supplier_url",
+   "fieldtype": "Attach",
+   "label": "Supplier Url"
+  },
+  {
+   "fieldname": "sb_product_files",
+   "fieldtype": "Section Break",
+   "label": "Product files",
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_images",
+   "fieldtype": "Table",
+   "label": "Product Images",
+   "options": "Furniture To Go Product Images"
+  },
+  {
+   "fieldname": "product_attachments",
+   "fieldtype": "Table",
+   "label": "Product Attachments",
+   "options": "Furniture To Go Product Attachments",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_bullet_points",
+   "fieldtype": "Section Break",
+   "label": "Bullet Points",
+   "read_only": 1
+  },
+  {
+   "fieldname": "product_bullet_points",
+   "fieldtype": "Table",
+   "label": "Product Bullet Points",
+   "options": "Furniture To Go Product Bullet Points",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_box",
+   "fieldtype": "Section Break",
+   "label": "Box"
+  },
+  {
+   "fieldname": "box",
+   "fieldtype": "Table",
+   "label": "Box",
+   "options": "Furniture To Go Product Box",
+   "read_only": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "read_only": 1
+  },
+  {
+   "fieldname": "add_to_stock",
+   "fieldtype": "Button",
+   "label": "Add To Stock"
+  }
+ ],
+ "image_field": "main_image",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "max_attachments": 20,
+ "modified": "2021-06-23 21:27:48.814568",
+ "modified_by": "Administrator",
+ "module": "F2G",
+ "name": "Furniture To Go Products",
+ "name_case": "UPPER CASE",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "show_name_in_global_search": 1,
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "product_name",
+ "track_changes": 1
+}
