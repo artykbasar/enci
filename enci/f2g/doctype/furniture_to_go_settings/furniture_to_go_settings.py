@@ -38,8 +38,7 @@ class FurnitureToGoSettings(Document):
 	@frappe.whitelist()
 	def tester(self):
 		if self.enable == 1:
-			from enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods import default_f2g_values
-			default_f2g_values()
-			# frappe.enqueue('enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.tester', timeout=7200)
-			self.reload()
+			from enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods import create_folder_in_files
+			create_folder_in_files('product_images_2')
+
 

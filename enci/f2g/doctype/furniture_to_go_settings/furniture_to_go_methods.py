@@ -1,11 +1,12 @@
 from __future__ import unicode_literals
-import frappe, time, dateutil, math, csv, datetime
+import frappe, time, math, csv, datetime
+from dateutil import parser
 from frappe.utils import (flt, getdate, get_url, now,
 	nowtime, get_time, today, get_datetime, add_days)
 from six import BytesIO
 import enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_api as f2g
 from frappe import _
-from frappe.core.doctype.file.file import get_random_filename, get_extension, strip, unquote, Image, File
+from frappe.core.doctype.file.file import get_random_filename, get_extension, strip, unquote, Image, File, create_new_folder
 import requests
 from frappe.installer import update_site_config
 
@@ -498,6 +499,7 @@ def create_item_box():
 
 def find_new_products():
     list_of_product = f2g_ins.product_link_extractor()
+    create_folder_in_files('product_images')
     new_product_links = []
     for each in list_of_product:
         response = frappe.db.get_list('Furniture To Go Products',
@@ -581,7 +583,7 @@ def import_product(product_link):
     item.product_sku = product_details['sku']
     item.product_name = product_details['product_name']
     if product_details['stock']['next_delivery_date']:
-        item.next_delivery = dateutil.parser.parse(product_details['stock']['next_delivery_date']).strftime("%Y-%m-%d")
+        item.next_delivery = parser.parse(product_details['stock']['next_delivery_date']).strftime("%Y-%m-%d")
     item.availability = product_details['stock']['stock_status']
     item.stock_level = product_details['stock']['qty']
     item.barcode = product_details['ean']
@@ -623,9 +625,9 @@ def import_product(product_link):
     if images:
         f2g_main_image = product_details['product_images'][0]
         item.f2g_main_image = f2g_main_image
-        item.main_image = download_file(f2g_main_image)['file_url']
+        item.main_image = download_file(f2g_main_image, 'Home/product_images')['file_url']
         for i in range(len(images)):
-            download_image = download_file(images[i])
+            download_image = download_file(images[i], 'Home/product_images')
             item.append('product_images', {'image_name': download_image['file_name'],
                                             'image_file': download_image['file_url'],
                                             'f2g_image_file': images[i]})
@@ -676,10 +678,10 @@ def sync_product(link, name):
         edited = True
     # next_delivery_date is being compared in F2G site. If there are any changes it will be changed to New value.
     if product_details['stock']['next_delivery_date']:
-        if item.next_delivery == dateutil.parser.parse(product_details['stock']['next_delivery_date']).strftime("%Y-%m-%d"):
+        if item.next_delivery == parser.parse(product_details['stock']['next_delivery_date']).strftime("%Y-%m-%d"):
             no_change('next_delivery_date')
         else:
-            item.next_delivery = dateutil.parser.parse(product_details['stock']['next_delivery_date']).strftime("%Y-%m-%d")
+            item.next_delivery = parser.parse(product_details['stock']['next_delivery_date']).strftime("%Y-%m-%d")
             edited = True
     # availability is being compared in F2G site. If there are any changes it will be changed to New value. 
     if item.availability == product_details['stock']['stock_status']:
@@ -795,8 +797,6 @@ def sync_product(link, name):
             else:
                 change_detected = True
                 break
-                # item.append('product_attachments',{'attachment_name': product_file['name'],
-                #                                 'attachment_file': product_file['link']})
     
     if change_detected:
         item.product_attachments = None
@@ -809,15 +809,7 @@ def sync_product(link, name):
     
     change_detected = False
     images = product_details['product_images']
-    # print(images)
     if images:
-        # main_image = product_details['product_images'][0]
-        # if main_image == item.f2g_main_image:
-        #     no_change('main_image')
-        # else:
-            
-        #     item.main_image = product_details['product_images'][0]
-        #     edited = True
         item_images = item.get_value('product_images')
         item_image_list = []
         for each in item_images:
@@ -826,18 +818,15 @@ def sync_product(link, name):
             if images[i] in item_image_list:
                 no_change("images")
             else:
-                # item.append('product_images', {'image_name': images[i].rsplit('/', 1)[1],
-                #                             'image_file': images[i]})
-                # edited = True
                 change_detected = True
                 break
     if change_detected:
         item.product_images = None
         f2g_main_image = product_details['product_images'][0]
         item.f2g_main_image = f2g_main_image
-        item.main_image = download_file(f2g_main_image)['file_url']
+        item.main_image = download_file(f2g_main_image, 'Home/product_images')['file_url']
         for i in range(len(images)):
-            download_image = download_file(images[i])
+            download_image = download_file(images[i], 'Home/product_images')
             item.append('product_images', {'image_name': download_image['file_name'],
                                             'image_file': download_image['file_url'],
                                             'f2g_image_file': images[i]})
@@ -897,3 +886,8 @@ def sync_product(link, name):
 
 def update_max_file_size(max_file_size = 52428800):
     update_site_config("max_file_size", max_file_size)
+
+def create_folder_in_files(folder):
+    folder_checker = frappe.db.exists('File', 'Home/{}'.format(folder))
+    if not folder_checker:
+        create_new_folder(folder, 'Home')
