@@ -54,7 +54,7 @@ website_context = {
 	"favicon": "/assets/enci/images/home.png",
 	"splash_image": "/assets/enci/images/home.png"
 }
-after_migrate = ['enci.api.whitelabel_patch']
+after_migrate = ['enci.api.whitelabel_patch', 'enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.update_max_file_size']
 
 # Generators
 # ----------

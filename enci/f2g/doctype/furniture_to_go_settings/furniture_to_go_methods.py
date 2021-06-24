@@ -7,6 +7,7 @@ import enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_api as f2g
 from frappe import _
 from frappe.core.doctype.file.file import get_random_filename, get_extension, strip, unquote, Image, File
 import requests
+from frappe.installer import update_site_config
 
 
 user_details = frappe.get_doc('Furniture To Go Settings')
@@ -892,3 +893,7 @@ def sync_product(link, name):
     # print(product_details)
     if edited:
         item.save(ignore_permissions=True)
+
+
+def update_max_file_size(max_file_size = 52428800):
+    update_site_config("max_file_size", max_file_size)

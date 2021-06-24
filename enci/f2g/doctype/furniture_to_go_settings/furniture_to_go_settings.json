@@ -111,7 +111,6 @@
    "fieldname": "default_company",
    "fieldtype": "Link",
    "label": "Default Company",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Company",
    "read_only_depends_on": "eval:doc.enable == false;"
   },
@@ -119,7 +118,6 @@
    "fieldname": "item_group",
    "fieldtype": "Link",
    "label": "Default Item Group",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Item Group",
    "read_only_depends_on": "eval:doc.enable == false;"
   },
@@ -127,7 +125,6 @@
    "fieldname": "default_brand",
    "fieldtype": "Link",
    "label": "Default Brand",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Brand",
    "read_only_depends_on": "eval:doc.enable == false;"
   },
@@ -135,7 +132,6 @@
    "fieldname": "default_supplier",
    "fieldtype": "Link",
    "label": "Default Supplier",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Supplier",
    "read_only_depends_on": "eval:doc.enable == false;"
   },
@@ -144,14 +140,12 @@
    "fieldname": "default_warehouse",
    "fieldtype": "Link",
    "label": "Default Warehouse",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Warehouse"
   },
   {
    "fieldname": "default_buying_price_list",
    "fieldtype": "Link",
    "label": "Default Buying Price List",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Price List",
    "read_only_depends_on": "eval:doc.enable == false;"
   },
@@ -159,7 +153,6 @@
    "fieldname": "default_selling_price_list",
    "fieldtype": "Link",
    "label": "Default Selling Price List",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "options": "Price List",
    "read_only_depends_on": "eval:doc.enable == false;"
   },
@@ -168,14 +161,13 @@
    "fieldname": "default_lead_time",
    "fieldtype": "Int",
    "label": "Default Lead Time",
-   "mandatory_depends_on": "eval:doc.enable == true;",
    "non_negative": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-06-23 21:27:46.762214",
+ "modified": "2021-06-24 10:16:42.060623",
  "modified_by": "Administrator",
  "module": "F2G",
  "name": "Furniture To Go Settings",
