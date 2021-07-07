@@ -45,6 +45,8 @@ def get_web_image(file_url, filename=None):
 
 def download_file(file_url, folder="Home/product_images", filename=None):
     image, filepath, extn, filename = get_web_image(file_url, filename=filename)
+    if len(filename) > 140:
+        filename = get_random_filename()
     file = frappe.new_doc('File')
     file.file_name = filename
     file.content = image
