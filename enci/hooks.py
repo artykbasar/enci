@@ -54,7 +54,7 @@ website_context = {
 	"favicon": "/assets/enci/images/home.png",
 	"splash_image": "/assets/enci/images/home.png"
 }
-after_migrate = ['enci.api.whitelabel_patch']
+# after_migrate = ['enci.api.whitelabel_patch']
 
 # Generators
 # ----------
@@ -131,7 +131,7 @@ scheduler_events = {
 	"monthly": []
 }
 
-boot_session = "enci.api.boot_session"
+# boot_session = "enci.api.boot_session"
 # Testing
 # -------
 
@@ -187,6 +187,6 @@ boot_session = "enci.api.boot_session"
 # 	"enci.auth.validate"
 # ]
 
-override_whitelisted_methods = {
-	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
-}
+# override_whitelisted_methods = {
+# 	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
+# }
