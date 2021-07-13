@@ -10,17 +10,17 @@ app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "info@artyk.co.uk"
 app_license = "MIT"
-# app_logo_url = '/assets/enci/images/home.png'
+app_logo_url = '/assets/enci/images/home.png'
 
 # Includes in <head>
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/enci/css/whitelabel_app.css"
-# app_include_js = "/assets/enci/js/whitelabel.js"
+app_include_css = "/assets/enci/css/whitelabel_app.css"
+app_include_js = "/assets/enci/js/whitelabel.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/enci/css/whitelabel_web.css"
+web_include_css = "/assets/enci/css/whitelabel_web.css"
 # web_include_js = "/assets/enci/js/enci.js"
 
 # include custom scss in every website theme (without file extension ".scss")
@@ -50,11 +50,11 @@ app_license = "MIT"
 #	"Role": "home_page"
 # }
 
-# website_context = {
-# 	"favicon": "/assets/enci/images/home.png",
-# 	"splash_image": "/assets/enci/images/home.png"
-# }
-# after_migrate = ['enci.api.whitelabel_patch']
+website_context = {
+	"favicon": "/assets/enci/images/home.png",
+	"splash_image": "/assets/enci/images/home.png"
+}
+after_migrate = ['enci.api.whitelabel_patch']
 
 # Generators
 # ----------
@@ -131,7 +131,7 @@ scheduler_events = {
 	"monthly": []
 }
 
-# boot_session = "enci.api.boot_session"
+boot_session = "enci.api.boot_session"
 # Testing
 # -------
 
@@ -183,10 +183,11 @@ scheduler_events = {
 # Authentication and authorization
 # --------------------------------
 
+
 # auth_hooks = [
 # 	"enci.auth.validate"
 # ]
 
-# override_whitelisted_methods = {
-# 	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
-# }
+override_whitelisted_methods = {
+	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
+}
