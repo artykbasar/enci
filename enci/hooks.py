@@ -99,9 +99,10 @@ after_migrate = ['enci.api.whitelabel_patch']
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Naming Series": "enci.erpnext_custom_integrations.custom.naming_series.ENCINamingSeries",
+	"Item": "enci.erpnext_custom_integrations.custom.item.ENCIItem"
+}
 
 # Document Events
 # ---------------
