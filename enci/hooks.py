@@ -54,7 +54,8 @@ website_context = {
 	"favicon": "/assets/enci/images/home.png",
 	"splash_image": "/assets/enci/images/home.png"
 }
-after_migrate = ['enci.api.whitelabel_patch']
+after_migrate = ['enci.api.whitelabel_patch', 
+				'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit']
 
 # Generators
 # ----------

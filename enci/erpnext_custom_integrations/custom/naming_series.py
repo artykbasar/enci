@@ -1,8 +1,8 @@
 import frappe
 from frappe import _, throw, msgprint
-from frappe.utils import cint, cstr
+from frappe.utils import cint
 from frappe.utils import now_datetime
-from frappe.model.naming import getseries, determine_consecutive_week_number
+from frappe.model.naming import getseries
 from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 
 
@@ -114,8 +114,6 @@ def parse_naming_series(parts, doctype='', doc=''):
 			part = today.strftime("%d")
 		elif e == 'YYYY':
 			part = today.strftime('%Y')
-		elif e == 'WW':
-			part = determine_consecutive_week_number(today)
 		elif e == 'timestamp':
 			part = str(today)
 		elif e == 'FY':
