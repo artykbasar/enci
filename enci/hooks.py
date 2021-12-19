@@ -194,3 +194,7 @@ boot_session = "enci.api.boot_session"
 override_whitelisted_methods = {
 	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
 }
+
+fixtures = [
+    "Item Group"
+]
