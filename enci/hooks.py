@@ -196,5 +196,7 @@ override_whitelisted_methods = {
 }
 
 fixtures = [
+	{"dt": "Custom Field",
+	"filters": [["dt", "=", "Item Group"]]},
     "Item Group"
 ]
