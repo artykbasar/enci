@@ -55,7 +55,8 @@ website_context = {
 	"splash_image": "/assets/enci/images/home.png"
 }
 after_migrate = ['enci.api.whitelabel_patch', 
-				'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit']
+				'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit',
+				'enci.erpnext_custom_integrations.custom.item_group.after_migrate_item_group_edit']
 
 # Generators
 # ----------
