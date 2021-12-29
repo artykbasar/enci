@@ -1,9 +1,44 @@
 import frappe
+from frappe.utils import cint
 
 
 def after_migrate_item_group_edit():
-    extend_route_length_250()
-    add_custom_fields()
+    if cint(frappe.db.get_single_value("System Settings", "setup_complete") or 0):
+        extend_route_length_250()
+        add_custom_fields()
+
+
+def add_item_group_values_from_sql(doc):
+    if not cint(doc.item_group_presets or 0):
+        with open('assets/enci/tabItem_Group.sql') as f:
+            contents = f.read()
+        contents = contents.split(';')
+        progress_total = len(contents)
+
+        for index, each in enumerate(contents):
+            if each.strip():
+                frappe.db.sql(each+";", ignore_ddl=True)
+            publish_progress(index+1, progress_total, f"Queary Progeress {index+1}/{progress_total}")
+        doc.item_group_presets = 1
+        doc.save()
+    else:
+        print("already has been loaded")
+
+
+def publish_progress(achieved, total, description, reload=False):
+    frappe.publish_realtime("sql_import_progress", 
+                            {
+                                "title": "Loading", 
+                                "count": achieved, 
+                                "total": total,
+                                "percentage": achieved / total * 100, 
+                                "description": description, 
+                                "reload": reload
+                            }, 
+                            user=frappe.session.user, 
+                            after_commit=False,
+                            docname="ENCI Settings")
+
 
 
 def extend_route_length_250():

@@ -23,6 +23,7 @@ app_include_js = "/assets/enci/js/whitelabel.js"
 web_include_css = "/assets/enci/css/whitelabel_web.css"
 # web_include_js = "/assets/enci/js/enci.js"
 
+
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "enci/public/scss/website"
 
@@ -195,8 +196,7 @@ override_whitelisted_methods = {
 	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
 }
 
-fixtures = [
-	{"dt": "Custom Field",
-	"filters": [["dt", "=", "Item Group"]]},
-    "Item Group"
-]
+# fixtures = [
+# 	{"dt": "Custom Field",
+# 	"filters": [["dt", "=", "Item Group"]]}
+# ]

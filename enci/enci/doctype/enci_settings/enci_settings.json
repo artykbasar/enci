@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2021-12-21 10:38:18.728095",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_group_presets_section",
+  "item_group_presets",
+  "load_presets"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_group_presets_section",
+   "fieldtype": "Section Break",
+   "label": "Item Group Presets"
+  },
+  {
+   "default": "0",
+   "description": "Uncheck to reload the presets to defaults",
+   "fieldname": "item_group_presets",
+   "fieldtype": "Check",
+   "label": "Item Group Presets"
+  },
+  {
+   "depends_on": "eval:doc.item_group_presets == false;",
+   "description": "Warning!!!\nLoading the presets will erase all the Item Group values and load it from SQL data. Any changes made to Item Group will be lost.",
+   "fieldname": "load_presets",
+   "fieldtype": "Button",
+   "label": "Load Presets",
+   "options": "load_item_group_presets"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2021-12-23 13:02:19.343299",
+ "modified_by": "Administrator",
+ "module": "ENCI",
+ "name": "ENCI Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

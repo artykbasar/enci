@@ -18,4 +18,5 @@ class WhitelabelSetting(Document):
 					frappe.db.set_value("System Settings","System Settings","app_name","ERPNext")
 				else:
 					frappe.db.set_value("System Settings","System Settings","app_name","Frappe")
+	
 
