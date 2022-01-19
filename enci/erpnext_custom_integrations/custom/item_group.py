@@ -2,6 +2,7 @@
 import frappe
 import pandas as pd
 from frappe.utils import (cint, now)
+from enci import publish_progress
 
 
 pd.set_option('expand_frame_repr', False)
@@ -30,6 +31,7 @@ def add_item_group_values_from_csv(doc):
         df.sort_values(by="lft", inplace=True)
         df.reset_index(inplace=True, drop=True)
         progress_total = len(df)
+        id = "sql_import_progress"
         for index, row in df.iterrows():
             existance_check = frappe.db.exists('Item Group', row['name'])
             if not existance_check:
@@ -44,11 +46,11 @@ def add_item_group_values_from_csv(doc):
                         frappe.db.sql(sql_query, ignore_ddl=True)
                         uploaded = False
                     except Exception as e:
-                        publish_progress(index+1, progress_total, f"Queary Progeress {index+1}/{progress_total} {row['name']} \n {e}")
+                        publish_progress(doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n {e}")
                         uploaded = False
-                publish_progress(index+1, progress_total, f"Queary Progeress {index+1}/{progress_total} {row['name']} \n Has been added to DB")
+                publish_progress(doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n Has been added to DB")
             else:
-                publish_progress(index+1, progress_total, f"Queary Progeress {index+1}/{progress_total} {row['name']} \n already exists in DB")
+                publish_progress(doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n already exists in DB")
         doc.item_group_presets = 1
         doc.save()
 
@@ -59,31 +61,16 @@ def add_item_group_values_from_sql(doc):
             contents = f.read()
         contents = contents.split(';')
         progress_total = len(contents)
+        id = "sql_import_progress"
 
         for index, each in enumerate(contents):
             if each.strip():
                 frappe.db.sql(each+";", ignore_ddl=True)
-            publish_progress(index+1, progress_total, f"Queary Progeress {index+1}/{progress_total}")
+            publish_progress(doc.doctype, id, index+1, progress_total, "")
         doc.item_group_presets = 1
         doc.save()
     else:
         print("already has been loaded")
-
-
-def publish_progress(achieved, total, description, reload=False):
-    frappe.publish_realtime("sql_import_progress", 
-                            {
-                                "title": "Loading", 
-                                "count": achieved, 
-                                "total": total,
-                                "percentage": achieved / total * 100, 
-                                "description": description, 
-                                "reload": reload
-                            }, 
-                            user=frappe.session.user, 
-                            after_commit=False,
-                            docname="ENCI Settings")
-
 
 
 def extend_route_length_250():
@@ -100,6 +87,7 @@ def add_custom_fields():
     item_group_id_check = frappe.db.exists('Custom Field', 'Item Group-item_group_id')
     amazon_node_id_check = frappe.db.exists('Custom Field', 'Item Group-amazon_node_id') 
     amazon_node_path_check = frappe.db.exists('Custom Field', 'Item Group-amazon_node_path')
+    item_group_id_on_item_check = frappe.db.exists('Custom Field', 'Item-item_group_id')
     if not item_group_id_check:
         doc = frappe.new_doc('Custom Field')
         doc.dt = "Item Group"
@@ -135,4 +123,17 @@ def add_custom_fields():
         doc_3.fieldtype = "Data"
         doc_3.translatable = 1
         doc_3.insert(ignore_permissions=True)
+    if not item_group_id_on_item_check:
+        item_group_id_doc = frappe.new_doc('Custom Field')
+        item_group_id_doc.dt = "Item"
+        item_group_id_doc.label = "Item Group ID"
+        item_group_id_doc.fieldname = "item_group_id"
+        item_group_id_doc.insert_after = "item_group"
+        item_group_id_doc.fetch_from = "item_group.item_group_id"
+        item_group_id_doc.fieldtype = "Data"
+        item_group_id_doc.read_only = 1
+        item_group_id_doc.length = 4
+        item_group_id_doc.reqd = 0
+        item_group_id_doc.insert(ignore_permissions=True)
+
 

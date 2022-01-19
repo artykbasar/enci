@@ -2,6 +2,7 @@ import frappe
 from frappe import _, throw, msgprint
 from frappe.utils import cint
 from frappe.utils import now_datetime
+from frappe.core.doctype.doctype.doctype import validate_series
 from frappe.model.naming import getseries
 from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 
@@ -40,6 +41,28 @@ class ENCINamingSeries(NamingSeries):
         
 		prefix = parse_naming_series(parts)
 		return prefix
+
+	def check_duplicate(self):
+		parent = list(set(
+			frappe.db.sql_list("""select dt.name
+				from `tabDocField` df, `tabDocType` dt
+				where dt.name = df.parent and df.fieldname='naming_series' and dt.name != %s""",
+				self.select_doc_for_series)
+			+ frappe.db.sql_list("""select dt.name
+				from `tabCustom Field` df, `tabDocType` dt
+				where dt.name = df.dt and df.fieldname='naming_series' and dt.name != %s""",
+				self.select_doc_for_series)
+			))
+		sr = [[frappe.get_meta(p).get_field("naming_series").options, p] for p in parent]
+		dt = frappe.get_doc("DocType", self.select_doc_for_series)
+		options = self.scrub_options_list(self.set_options.split("\n"))
+		for series in options:
+			validate_series(dt, series)
+			for i in sr:
+				if i[0]:
+					existing_series = [d.split('.')[0] for d in i[0].split("\n")]
+					if series.split(".")[0] == existing_series:
+						frappe.throw(_("Series {0} already used in {1}").format(series,i[1]))
 
 def set_name_by_naming_series(doc):
 	"""Sets name by the `naming_series` property"""

@@ -13,6 +13,22 @@ def whitelabel_patch():
 	update_field_label()
 	if cint(get_frappe_version()) >= 13 and not frappe.db.get_single_value('Whitelabel Setting', 'ignore_onboard_whitelabel'):
 		update_onboard_details()
+	change_app_name_to_company_name()
+
+
+def change_app_name_to_company_name():
+	doc = frappe.get_doc("Website Settings")
+	company_name = frappe.get_doc("Global Defaults")
+	save_trigger = False
+	if doc.app_name != company_name.default_company:
+		doc.app_name = company_name.default_company
+		save_trigger = True
+	if doc.app_logo != "/assets/enci/images/home.png":
+		doc.app_logo = '/assets/enci/images/home.png'
+		save_trigger = True
+	if save_trigger:
+		doc.save(ignore_permissions=True)
+
 
 
 def update_field_label():

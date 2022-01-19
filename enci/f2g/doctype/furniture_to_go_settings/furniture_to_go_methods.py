@@ -1,14 +1,16 @@
 from __future__ import unicode_literals
-import frappe, time, math, csv, datetime
+import frappe, time, datetime
 from dateutil import parser
-from frappe.utils import (flt, getdate, get_url, now,
-	nowtime, get_time, today, get_datetime, add_days)
+from frappe.utils import (nowtime, get_time)
 from six import BytesIO
 import enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_api as f2g
 from frappe import _
-from frappe.core.doctype.file.file import get_random_filename, get_extension, strip, unquote, Image, File, create_new_folder
+from frappe.core.doctype.file.file import get_random_filename, strip, unquote, create_new_folder
 import requests
 from frappe.installer import update_site_config
+from enci import publish_progress
+from enci.erpnext_custom_integrations.custom.item import create_item_box, add_item_box_to_item
+from enci.f2g.doctype.furniture_to_go_product_group.f2g_product_group import group_dict
 
 
 user_details = frappe.get_doc('Furniture To Go Settings')
@@ -57,9 +59,10 @@ def download_file(file_url, folder="Home/product_images", filename=None):
     return ret_dict
 
 def default_f2g_values():
+    stock_settings = frappe.get_doc("Stock Settings")
     settings = frappe.get_doc('Furniture To Go Settings')
     settings.enable = 1
-    settings.item_group = "Products"
+    settings.item_group = stock_settings.item_group
     settings.default_lead_time = 5
     company_check = frappe.db.exists('Company', 'Furniture To Go')
     if not company_check:
@@ -100,9 +103,6 @@ def default_f2g_values():
     settings.save(ignore_permissions=True)
 
 def tester():
-    # print(download_file('https://furniture-to-go.co.uk/files/index/download/id/1411138897/', "Home/Attachments",True))
-    # default_f2g_values()
-    # scheduled_f2g_sync()
     pass
 
 def scheduled_f2g_sync():
@@ -390,125 +390,20 @@ def get_f2g_product_list():
         # break
     return sku_list
 
-def add_item_box_to_item():
-    item_box_check = frappe.db.exists('DocType', 'Item Box')
-    item_box_check_in_item = frappe.db.exists('Custom Field', 'Item-item_box')
-    sb_item_box_check_in_item = frappe.db.exists('Custom Field', 'Item-item_box_sb')
-    frappe.db.exists('Custom Field', 'Item-item_box')
-    # print(item_box_check_in_item)
-    if item_box_check:
-        if item_box_check_in_item:
-            # print('item_box feild exists in Item DocType')
-            pass
-        else:
-            doc = frappe.new_doc('Custom Field')
-            doc.dt = 'Item'
-            doc.label = 'Item Box '
-            doc.fieldname = 'item_box'
-            doc.insert_after = 'description'
-            doc.fieldtype = 'Table'
-            doc.options = 'Item Box'
-            doc.insert(ignore_permissions=True)
-        if sb_item_box_check_in_item:
-            # print('sb_item_box feild exists in Item DocType')
-            pass
-        else:
-            doc_2 = frappe.new_doc('Custom Field')
-            doc_2.dt = 'Item'
-            doc_2.label = 'Item Box sb'
-            doc_2.fieldname = 'item_box_sb'
-            doc_2.insert_after = 'description'
-            doc_2.fieldtype = 'Section Break'
-            doc_2.insert(ignore_permissions=True)
-    else:
-        print('Item Box Doctype has not been created, Please Create it Fist')
 
-def create_item_box():
-    item_box_check = frappe.db.exists('DocType', 'Item Box')
-    if item_box_check:
-        #print('Item Box already exist')
-        pass
-    else:
-        doc = frappe.new_doc('DocType')
-        doc.name = 'Item Box'
-        doc.module = 'Stock'
-        doc.istable = 1
-        doc.editable_grid = 1
-        doc.track_views = 1
-        doc.custom = 1
-        doc.append('fields', 
-                {"label":"Box Number",
-                "fieldtype": "Data",
-                'fieldname': 'box_number',
-                'in_list_view': 1,
-                'columns': 1
-            })
-        doc.append('fields',
-                {"label": "EAN",
-                "fieldtype": "Barcode",
-                'fieldname': 'box_ean',
-                'in_list_view': 1,
-                'columns': 2
-            })
-        doc.append('fields',
-                {"label": "UPC",
-                "fieldtype": "Barcode",
-                'fieldname': 'box_upc',
-                'in_list_view': 1,
-                'columns': 2
-            })
-        doc.append('fields',
-                {"label": "Height",
-                "fieldtype": "Float",
-                'precision': 1,
-               'fieldname': 'box_height',
-                'in_list_view': 1,
-                'columns': 1
-            })
-        doc.append('fields',
-                {"label": "Width",
-                "fieldtype": "Float",
-                'precision': 1,
-                'fieldname': 'box_width',
-                'in_list_view': 1,
-                'columns': 1
-            })
-        doc.append('fields',
-                {"label": "Depth",
-                "fieldtype": "Float",
-                'precision': 1,
-                'fieldname': 'box_depth',
-                'in_list_view': 1,
-                'columns': 1
-            })
-        doc.append('fields',
-                {"label": "Unit",
-                "fieldtype": "Data",
-                'fieldname': 'box_dim_unit',
-                'in_list_view': 1,
-                'columns': 1
-            })
-        doc.append('fields',
-                {"label": "Weight",
-                "fieldtype": "Float",
-                'precision': 3,
-                'fieldname': 'box_weight',
-                'in_list_view': 1,
-                'columns': 1
-            })
-        doc.document_type = 'Document'
-        doc.insert(ignore_permissions=True)
-
-def find_new_products():
+def find_new_products(docname=None, field_name=None, id=None):
+    pub_prog_test = (docname and field_name and id)
+    if pub_prog_test:
+        f2g_ins.doctype = docname
+        f2g_ins.field_name = field_name
+        f2g_ins.id = id
     list_of_product = f2g_ins.product_link_extractor()
     create_folder_in_files('product_images')
+    total_len = len(list_of_product)
     new_product_links = []
-    for each in list_of_product:
-        response = frappe.db.get_list('Furniture To Go Products',
-                                        filters={
-                                            'supplier_url': each
-                                        }
-                                    )
+    for index, each in enumerate(list_of_product):
+        response = frappe.db.get_list('Furniture To Go Products', filters={'supplier_url': each})
+        desc = "New Product, Being added to importing list"
         if not response:
             print(each)
             new_product_links.append(each)
@@ -516,40 +411,69 @@ def find_new_products():
             for name in response:
                 item_code = name['name']
                 sync_product(link=each, name=item_code)
+                desc = "Product details are being synced"
                 # frappe.enqueue('enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.sync_product', link=each, name=item_code)
-
+        if pub_prog_test:
+            publish_progress(docname, id, index+1, total_len, desc, field_name)
+    total_len = len(new_product_links)
     if new_product_links:        
-        import_products_list(new_product_links)
+        import_products_list(new_product_links, docname, field_name, id)
     else:
         print('There is no new products')
+    if pub_prog_test:
+        f2g_ins.doctype = None
+        f2g_ins.field_name = None
+        f2g_ins.id = None
 
-def product_group_finder():
+
+def product_group_finder(docname=None, field_name=None, id=None):
+    pub_prog_test = (docname and field_name and id)
+    if pub_prog_test:
+        f2g_ins.doctype = docname
+        f2g_ins.field_name = field_name
+        f2g_ins.id = id
     group_data = f2g_ins.fetch_category_links()
     group_data_list = group_data.keys()
     response = frappe.db.get_list('Furniture To Go Products',fields=['name', 'supplier_url'])
-    for each in response:
-        print(each)
+    total_len = len(response)
+    for index, each in enumerate(response):
         if each['supplier_url'] in group_data_list:
             name = each['name']
             item = frappe.get_doc('Furniture To Go Products', name)
-            group = frappe.new_doc('Furniture To Go Product Group')
             group_names = group_data[each['supplier_url']]
             parent_group = group_names['parent']
             group_name = '{} - {}'.format(group_names['child'],parent_group)
             child_check = frappe.db.get_list('Furniture To Go Product Group', filters={'f2g_group_name': group_name})
             if not child_check:
+                dict_check = group_dict.get(group_name)
+                group = frappe.new_doc('Furniture To Go Product Group')
+                if dict_check:
+                    item_group_check = frappe.db.get_list('Item Group', filters={'name': dict_check})
+                    if item_group_check:
+                        group.item_group = dict_check
                 group.f2g_group_name = group_name
                 group.is_group = 0
                 group.insert(ignore_permissions=True)
             item.f2g_group = group_name
             item.save()
-            print(name)
+        if pub_prog_test:
+            publish_progress(docname, id, index+1, total_len, "Matching Products to the F2G Groups", field_name)
+    if pub_prog_test:
+        f2g_ins.doctype = None
+        f2g_ins.field_name = None
+        f2g_ins.id = None
 
-def product_range_finder():
+def product_range_finder(docname=None, field_name=None, id=None):
+    pub_prog_test = (docname and field_name and id)
+    if pub_prog_test:
+        f2g_ins.doctype = docname
+        f2g_ins.field_name = field_name
+        f2g_ins.id = id
     range_data = f2g_ins.fetch_category_links(True)
     range_data_list = range_data.keys()
     response = frappe.db.get_list('Furniture To Go Products',fields=['name', 'supplier_url'])
-    for each in response:
+    total_len = len(response)
+    for index, each in enumerate(response):
         if each['supplier_url'] in range_data_list:
             name = each['name']
             item = frappe.get_doc('Furniture To Go Products', name)
@@ -563,12 +487,30 @@ def product_range_finder():
             item.range_name = range_name
             item.save(ignore_permissions=True)
             print(name, range_name)
+        if pub_prog_test:
+            publish_progress(docname, id, index+1, total_len, "Matching Products to the F2G Ranges", field_name)
+    if pub_prog_test:
+        f2g_ins.doctype = None
+        f2g_ins.field_name = None
+        f2g_ins.id = None
     
-def import_products_list(product_links):
-    for product_link in product_links:
-        # import_product(product_link=product_link)
-        frappe.enqueue('enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.import_product',product_link=product_link)
-
+def import_products_list(product_links, docname=None, field_name=None, id=None):
+    pub_prog_test = (docname and field_name and id)
+    total_len = len(product_links)
+    if pub_prog_test:
+        f2g_ins.doctype = docname
+        f2g_ins.field_name = field_name
+        f2g_ins.id = id
+    for index, product_link in enumerate(product_links):
+        import_product(product_link=product_link)
+        if pub_prog_test:
+            publish_progress(docname, id, index+1, total_len, "Importing New Products", field_name)
+        # frappe.enqueue('enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.import_product',product_link=product_link)
+    if pub_prog_test:
+        f2g_ins.doctype = None
+        f2g_ins.field_name = None
+        f2g_ins.id = None
+        
 def import_product(product_link):
     product_details = f2g_ins.product_data_extractor(product_link)
     print(product_details)

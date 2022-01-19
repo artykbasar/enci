@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from enci import publish_progress
 
 f2g_url = 'https://furniture-to-go.co.uk/customer/account/login/'
 # Login link for furniture to go
@@ -19,6 +20,9 @@ class F2G:
     def __init__(self):
         self.s = requests.Session()
         self.main_url = 'https://furniture-to-go.co.uk/'
+        self.field_name = None
+        self.doctype = None
+        self.id = None
     #     When cass is initiated requests session is being opened.
 
     def login(self, login_user, password, url=f2g_url, post_url=f2g_url_login, header=load):
@@ -85,8 +89,11 @@ class F2G:
         links = []
         soup = BeautifulSoup(html.text, 'lxml')
         links_html = soup.find('ul', id='vert-menu').findAll('a', href=True)
-        for link_html in links_html:
+        total_len = len(links_html)
+        for index, link_html in enumerate(links_html):
             links.append(link_html['href'])
+            if self.field_name and self.doctype and self.id:
+                publish_progress(self.doctype,  self.id, index+1, total_len, "Fetching Range Links", self.field_name)
         return links
 
     def range_or_category(self, key, range):
@@ -111,8 +118,9 @@ class F2G:
             parent_category[name] = index
         nav_children = soup.findAll('ul', class_='level0')
         product_category = {}
-        for key in parent_category.keys():
-            print(key)
+        total_len = len(parent_category.keys())
+        for index, key in enumerate(parent_category.keys()):
+            # print(key)
             if self.range_or_category(key, range):
                 pass
             else:
@@ -128,6 +136,9 @@ class F2G:
                             "parent": key,
                             "child": child_name,
                         }
+            if self.field_name and self.doctype and self.id:
+                publish_progress(self.doctype,  self.id, index+1, total_len, "Fetching Category Links", self.field_name)
+            
         return product_category
 
     def product_link_extractor(self, range_url=None):
@@ -135,9 +146,9 @@ class F2G:
             spits out links of the product."""
         if not range_url:
             range_url = self.fetch_ranges_links()
-        
         links = []
-        for each_link in range_url:
+        total_len = len(range_url)
+        for index, each_link in enumerate(range_url):
             each_link = each_link + '?infinitescroll=1&limit=all'
             html = self.s.get(each_link)
             soup = BeautifulSoup(html.text, 'lxml')
@@ -145,6 +156,8 @@ class F2G:
             for link_html in links_html:
                 product = link_html.a['href']
                 links.append(product)
+            if self.doctype and self.field_name and self.id:
+                publish_progress(self.doctype, self.id, index+1, total_len, "Product Link Extraction", self.field_name)
         return links
     
 
