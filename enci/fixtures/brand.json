@@ -96,5 +96,19 @@
   "parent": null,
   "parentfield": null,
   "parenttype": null
+ },
+ {
+  "brand": "Steens Group A/S",
+  "brand_defaults": [],
+  "brand_id": "SGAS",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Brand",
+  "image": null,
+  "modified": "2022-01-25 16:40:42.525788",
+  "name": "Steens Group A/S",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null
  }
 ]
