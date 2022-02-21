@@ -2,7 +2,38 @@ from __future__ import unicode_literals
 import frappe
 import json
 from frappe.utils import floor, flt, today, cint
-from frappe import _
+from frappe import _, throw
+from frappe.exceptions import DuplicateEntryError
+from frappe.core.page.background_jobs.background_jobs import get_info
+
+
+def publish_progress(docname, id, achieved, total, description, field_name=None, done_message="Done", title="Loading", reload=False):
+    frappe.publish_realtime(id, 
+                            {
+                                "title": title, 
+                                "count": achieved, 
+                                "total": total,
+                                "percentage": achieved / total * 100, 
+                                "description": f"Progress: {achieved}/{total} {description}", 
+                                "reload": reload,
+                                "fieldname": field_name,
+                                "done_message": done_message
+                            }, 
+                            user=frappe.session.user, 
+                            after_commit=False,
+                            docname=docname)
+
+def backgroud_jobs_check(function_path):
+    list_of_jobs = get_info()
+    if list_of_jobs:
+        for job in list_of_jobs:
+            if job['job_name'] == function_path:
+                throw(_([f"Current Job Status: {job['status']}", 
+                        f"Job has been created at: {job['creation']}"]), 
+                    DuplicateEntryError, 
+                    "This job already in progress", 
+                    as_list=True)
+
 
 def whitelabel_patch():
 	#delete erpnext welcome page 

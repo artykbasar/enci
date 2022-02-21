@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import enci
 import frappe
-from enci import backgroud_jobs_check
+from enci.api import backgroud_jobs_check
 # import enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods as f2g
 from frappe.model.document import Document
 

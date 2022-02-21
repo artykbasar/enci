@@ -8,7 +8,7 @@ from frappe.exceptions import DoesNotExistError
 from frappe import _
 from enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods import f2g_ins, download_file
 from dateutil import parser
-from enci import backgroud_jobs_check, publish_progress
+from enci.api import backgroud_jobs_check, publish_progress
 
 
 @frappe.whitelist()
