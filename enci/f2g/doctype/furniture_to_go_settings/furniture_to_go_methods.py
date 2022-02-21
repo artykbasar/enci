@@ -46,16 +46,18 @@ def get_web_image(file_url, filename=None):
     return image, filename1, extn, filename
 
 def download_file(file_url, folder="Home/product_images", filename=None):
-    image, filepath, extn, filename = get_web_image(file_url, filename=filename)
-    if len(filename) > 140:
-        filename = get_random_filename()
-    file = frappe.new_doc('File')
-    file.file_name = filename
-    file.content = image
-    file.folder = folder
-    saved_file = file.insert(ignore_permissions=True, ignore_if_duplicate=True)
-    ret_dict = {'file_name': saved_file.file_name, 'file_url': saved_file.file_url}
-    print(ret_dict)
+    try:
+        image, filepath, extn, filename = get_web_image(file_url, filename=filename)
+        if len(filename) > 140:
+            filename = get_random_filename()
+        file = frappe.new_doc('File')
+        file.file_name = filename
+        file.content = image
+        file.folder = folder
+        saved_file = file.insert(ignore_permissions=True, ignore_if_duplicate=True)
+        ret_dict = {'file_name': saved_file.file_name, 'file_url': saved_file.file_url}
+    except KeyError:
+        ret_dict = {'file_name': filename, 'file_url': file_url}
     return ret_dict
 
 def default_f2g_values():
@@ -113,6 +115,7 @@ def scheduled_f2g_sync():
                                             'name'])
     for product in products:
         if not product.discontinued:
+            f2g_item = frappe.get_doc()
             sync_product(product.supplier_url, product.name)
 
 def scheduled_sync():
@@ -139,9 +142,7 @@ def add_products_to_items():
     add_f2g_sku_to_items(f2g_sku)
 
 def add_f2g_sku_to_items(f2g_sku):
-    if type(f2g_sku) is list:
-        pass
-    elif type(f2g_sku) is str:
+    if type(f2g_sku) != list:
         f2g_sku = [f2g_sku]
     for each in f2g_sku:
         item_check = frappe.db.get_list(
@@ -159,7 +160,7 @@ def add_f2g_sku_to_items(f2g_sku):
             new_slideshow = frappe.new_doc('Website Slideshow')
             ####################
             item_name = f2g_item.product_name
-            #
+            # 
             supplier_part_no = f2g_item.product_sku
             #
             image = f2g_item.main_image
@@ -561,10 +562,13 @@ def import_product(product_link):
     
     if product_details['product_file']:
         for product_file in product_details['product_file']:
-            downloaded_file = download_file(product_file['link'], "Home/Attachments", True)
-            item.append('product_attachments',{'attachment_name': downloaded_file['file_name'],
-                                               'attachment_file': downloaded_file['file_url'],
-                                               'f2g_attachment_file': product_file['link']})
+            try:
+                downloaded_file = download_file(product_file['link'], "Home/Attachments", True)
+                item.append('product_attachments',{'attachment_name': downloaded_file['file_name'],
+                                                'attachment_file': downloaded_file['file_url'],
+                                                'f2g_attachment_file': product_file['link']})
+            except KeyError:
+                pass
     images = product_details['product_images']
     if images:
         f2g_main_image = product_details['product_images'][0]
@@ -593,21 +597,26 @@ def import_product(product_link):
     item.insert(ignore_permissions=True)
 
 def no_change(field_name):
-    pass
     # print('In {} feild, No chage has been detected'.format(field_name))
+    pass
 
-def sync_product(link, name):
+def sync_product(link, name, doctype=None):
     product_details = f2g_ins.product_data_extractor(link)
-    print(link, name)
+
     if product_details['status'] != 200:
-        print(product_details['status'])
-        item = frappe.get_doc('Furniture To Go Products', name)
-        if time:
+        if doctype:
+            item = doctype
+        else:
+            item = frappe.get_doc('Furniture To Go Products', name)
+        if item:
             item.discontinued = 1
             item.save(ignore_permissions=True)
         return
     edited = False
-    item = frappe.get_doc('Furniture To Go Products', name)
+    if doctype:
+        item = doctype
+    else:
+        item = frappe.get_doc('Furniture To Go Products', name)
     # product_sku is being compared in F2G site. If there are any changes it will be changed to New value.
     if item.product_sku == product_details['sku']:
         no_change('product_sku')
@@ -640,13 +649,11 @@ def sync_product(link, name):
         item.stock_level = product_details['stock']['qty']
         edited = True
     # barcode is being compared in F2G site. If there are any changes it will be changed to New value. 
-    if item.barcode == product_details['ean']:
-        no_change('barcode')
-    else:
+    if item.barcode != product_details['ean'] and not item.manual_barcode_entry:
         item.barcode = product_details['ean']
         edited = True
     # Box is being compared in F2G site. If there are any changes it will be changed to New value.
-    if product_details['box']:
+    if product_details['box'] and not item.manual_box_entry:
         box_keys = product_details["box"].keys()
         box_int = 0
         for box_key in box_keys:
@@ -666,7 +673,7 @@ def sync_product(link, name):
                     if float(item.box[box_int].height) == float(height):
                         no_change('height')
                     else:
-                        item.box[box_int].heigt = height
+                        item.box[box_int].height = height
                         edited = True
                 # Box width is being compared in F2G site. If there are any changes it will be changed to New value.
                 if width:
@@ -745,10 +752,13 @@ def sync_product(link, name):
     if change_detected:
         item.product_attachments = None
         for product_file in product_details['product_file']:
-            downloaded_file = download_file(product_file['link'], "Home/Attachments", True)
-            item.append('product_attachments',{'attachment_name': downloaded_file["file_name"],
-                                               'attachment_file': downloaded_file["file_url"],
-                                               'f2g_attachment_file': product_file['link']})
+            try:
+                downloaded_file = download_file(product_file['link'], "Home/Attachments", True)
+                item.append('product_attachments',{'attachment_name': downloaded_file["file_name"],
+                                                    'attachment_file': downloaded_file["file_url"],
+                                                    'f2g_attachment_file': product_file['link']})
+            except KeyError:
+                pass
         edited = True
     
     change_detected = False
@@ -826,6 +836,7 @@ def sync_product(link, name):
     # print(product_details)
     if edited:
         item.save(ignore_permissions=True)
+    return item
 
 
 def update_max_file_size(max_file_size = 52428800):
