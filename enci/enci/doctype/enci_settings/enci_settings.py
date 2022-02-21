@@ -4,7 +4,7 @@
 # import frappe
 import frappe
 from frappe.model.document import Document
-from enci.erpnext_custom_integrations.custom.item_group import add_item_group_values_from_sql, after_migrate_item_group_edit, add_item_group_values_from_csv
+from enci.enci.custom.item_group import add_item_group_values_from_sql, after_migrate_item_group_edit, add_item_group_values_from_csv
 
 class ENCISettings(Document):
 	@frappe.whitelist()

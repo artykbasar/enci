@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-from enci import publish_progress
+from enci.api import publish_progress
 
 f2g_url = 'https://furniture-to-go.co.uk/customer/account/login/'
 # Login link for furniture to go

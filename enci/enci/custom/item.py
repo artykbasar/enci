@@ -14,7 +14,7 @@ class ENCIItem(Item):
                     template_item_name = frappe.db.get_value("Item", self.variant_of, "item_name")
                     make_variant_item_code(self.variant_of, template_item_name, self)
             else:
-                from enci.erpnext_custom_integrations.custom.naming_series import set_name_by_naming_series
+                from enci.enci.custom.naming_series import set_name_by_naming_series
                 set_name_by_naming_series(self)
                 self.item_code = self.name
 
