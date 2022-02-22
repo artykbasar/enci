@@ -603,38 +603,5 @@
   "parentfield": null,
   "parenttype": null,
   "range_name": "Zingaro"
- },
- {
-  "brand": "MEBLE W\u00d3JCIK",
-  "docstatus": 0,
-  "doctype": "Furniture To Go Range",
-  "modified": "2022-01-25 16:29:52.071071",
-  "name": "Fribo",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "range_name": "Fribo"
- },
- {
-  "brand": "Tvilum",
-  "docstatus": 0,
-  "doctype": "Furniture To Go Range",
-  "modified": "2022-01-25 16:28:47.715878",
-  "name": "Prima Professional Office",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "range_name": "Prima Professional Office"
- },
- {
-  "brand": "Steens Group A/S",
-  "docstatus": 0,
-  "doctype": "Furniture To Go Range",
-  "modified": "2022-01-25 16:40:49.617455",
-  "name": "Richmond (NEW)",
-  "parent": null,
-  "parentfield": null,
-  "parenttype": null,
-  "range_name": "Richmond (NEW)"
  }
 ]

@@ -26,17 +26,6 @@ class ENCIItem(Item):
         self.full_item_code = f"{self.brand_id}{self.item_group_id}{self.item_code}"
         return org_validate
 
-    def on_trash(self):
-        self.unlink_f2g_on_delete()
-        return super(ENCIItem, self).on_trash()
-    
-    def unlink_f2g_on_delete(self):
-        f2g_check = frappe.db.get_list("Furniture To Go Products", 
-                        filters={'item': self.name}, fields=['name'])
-        if f2g_check:
-            for each in f2g_check:
-                frappe.db.set_value("Furniture To Go Products", each['name'], {'item': ''})
-
     
 def after_migrate_item_edit():
     create_item_box()
