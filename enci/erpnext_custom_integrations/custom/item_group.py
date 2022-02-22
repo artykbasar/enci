@@ -2,7 +2,7 @@
 import frappe
 import pandas as pd
 from frappe.utils import (cint, now)
-from enci.api import publish_progress
+from enci import publish_progress
 
 
 pd.set_option('expand_frame_repr', False)

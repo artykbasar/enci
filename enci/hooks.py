@@ -56,10 +56,10 @@ website_context = {
 	"splash_image": "/assets/enci/images/home.png"
 }
 after_migrate = ['enci.api.whitelabel_patch', 
-				'enci.enci.custom.item_group.after_migrate_item_group_edit',
-				'enci.enci.custom.item.after_migrate_item_edit',
-				'enci.enci.custom.brand.after_migrate_brand_edit',
-				'enci.enci.custom.file.after_migrate_file_edit']
+				'enci.erpnext_custom_integrations.custom.item_group.after_migrate_item_group_edit',
+				'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit',
+				'enci.erpnext_custom_integrations.custom.brand.after_migrate_brand_edit',
+				'enci.erpnext_custom_integrations.custom.file.after_migrate_file_edit']
 
 # Generators
 # ----------
@@ -105,10 +105,10 @@ after_migrate = ['enci.api.whitelabel_patch',
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Naming Series": "enci.enci.custom.naming_series.ENCINamingSeries",
-	"Item": "enci.enci.custom.item.ENCIItem",
-	"Brand": "enci.enci.custom.brand.ENCIBrand",
-	"File": "enci.enci.custom.file.ENCIFile"
+	"Naming Series": "enci.erpnext_custom_integrations.custom.naming_series.ENCINamingSeries",
+	"Item": "enci.erpnext_custom_integrations.custom.item.ENCIItem",
+	"Brand": "enci.erpnext_custom_integrations.custom.brand.ENCIBrand",
+	"File": "enci.erpnext_custom_integrations.custom.file.ENCIFile"
 }
 
 # Document Events

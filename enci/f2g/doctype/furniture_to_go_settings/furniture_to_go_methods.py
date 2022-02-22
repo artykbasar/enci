@@ -8,8 +8,8 @@ from frappe import _
 from frappe.core.doctype.file.file import get_random_filename, strip, unquote, create_new_folder
 import requests
 from frappe.installer import update_site_config
-from enci.api import publish_progress
-from enci.enci.custom.item import create_item_box, add_item_box_to_item
+from enci import publish_progress
+from enci.erpnext_custom_integrations.custom.item import create_item_box, add_item_box_to_item
 from enci.f2g.doctype.furniture_to_go_product_group.f2g_product_group import group_dict
 
 
