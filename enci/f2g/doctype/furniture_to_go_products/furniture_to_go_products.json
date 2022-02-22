@@ -1,11 +1,5 @@
 {
- "actions": [
-  {
-   "action": "pass",
-   "action_type": "Server Action",
-   "label": "Add To Stock"
-  }
- ],
+ "actions": [],
  "autoname": "field:product_sku",
  "creation": "2021-02-07 02:01:57.162153",
  "doctype": "DocType",
@@ -19,8 +13,12 @@
   "f2g_main_image",
   "next_delivery",
   "f2g_group",
+  "item_group",
   "range_name",
+  "brand",
   "discontinued",
+  "sync_to_f2g",
+  "sync_to_item",
   "column_break_12",
   "hd_price",
   "store_delivery_price",
@@ -28,9 +26,11 @@
   "over_500",
   "over_1000",
   "over_2000",
+  "item",
   "column_break_5",
   "availability",
   "stock_level",
+  "manual_barcode_entry",
   "barcode",
   "supplier_url",
   "sb_product_files",
@@ -39,9 +39,9 @@
   "sb_bullet_points",
   "product_bullet_points",
   "sb_box",
+  "manual_box_entry",
   "box",
-  "description",
-  "add_to_stock"
+  "description"
  ],
  "fields": [
   {
@@ -168,7 +168,8 @@
   {
    "fieldname": "barcode",
    "fieldtype": "Barcode",
-   "label": "Barcode"
+   "label": "Barcode",
+   "read_only_depends_on": "eval:doc.manual_barcode_entry == false;"
   },
   {
    "fieldname": "supplier_url",
@@ -217,7 +218,7 @@
    "fieldtype": "Table",
    "label": "Box",
    "options": "Furniture To Go Product Box",
-   "read_only": 1
+   "read_only_depends_on": "eval:doc.manual_box_entry == false;"
   },
   {
    "fieldname": "description",
@@ -226,16 +227,58 @@
    "read_only": 1
   },
   {
-   "fieldname": "add_to_stock",
+   "fieldname": "sync_to_f2g",
    "fieldtype": "Button",
-   "label": "Add To Stock"
+   "label": "Sync To F2G",
+   "options": "sync_to_f2g"
+  },
+  {
+   "default": "0",
+   "description": "Checking it, will allow users to manually entry product box details. Use this, if sync system cannot fetch the correct box dimensions. Once this is checked, sync system will not look for any changes in box dimension section to avoid re entering the details constantly.",
+   "fieldname": "manual_box_entry",
+   "fieldtype": "Check",
+   "label": "Manual Entry for Boxes"
+  },
+  {
+   "default": "0",
+   "fieldname": "manual_barcode_entry",
+   "fieldtype": "Check",
+   "label": "Manual Barcode Entry"
+  },
+  {
+   "fetch_from": "f2g_group.item_group",
+   "fetch_if_empty": 1,
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fetch_from": "range_name.brand",
+   "fetch_if_empty": 1,
+   "fieldname": "brand",
+   "fieldtype": "Link",
+   "label": "Brand",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "sync_to_item",
+   "fieldtype": "Button",
+   "label": "Sync To Item",
+   "options": "sync_f2g_to_item_button"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
   }
  ],
  "image_field": "main_image",
  "index_web_pages_for_search": 1,
  "links": [],
  "max_attachments": 20,
- "modified": "2021-06-23 21:27:48.814568",
+ "modified": "2022-01-30 19:54:13.753355",
  "modified_by": "Administrator",
  "module": "F2G",
  "name": "Furniture To Go Products",
