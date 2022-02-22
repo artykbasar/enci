@@ -2,30 +2,33 @@ frappe.listview_settings['Furniture To Go Products'] = {
 	onload: function(listview) {
 		const f2g_to_item = "enci.f2g.doctype.furniture_to_go_products.furniture_to_go_products.sync_f2g_to_item_list_enqueue";
 		// const sync_to_f2g = "enci.f2g.doctype.furniture_to_go_products.furniture_to_go_products.sync_f2g_to_item_list_enqueue"
-
-
-		listview.page.add_actions_menu_item(__("Sync To F2G, Items"), function() {
-			listview.call_for_selected_items(f2g_to_item);
-		});
-		listview.page.add_button(__("Sync To F2G"), function() {
-			frappe.call({
-                method: 'enci.f2g.doctype.furniture_to_go_products.furniture_to_go_products.sync_all_f2g_products',
-                args: {
-
-                },
-                // disable the button until the request is completed
-                // btn: $('.primary-action'),
-                // freeze the screen until the request is completed
-                freeze: false,
-                callback: (r) => {
-					return true;
-                    // on success
-                },
-                error: (r) => {
-                    // on error
-                }
-            })
-		});
+		frappe.db.get_single_value('Furniture To Go Settings', 'enable').then(enable => {
+        	if (enable == 1) {
+				listview.page.add_actions_menu_item(__("Sync To F2G, Items"), function() {
+					listview.call_for_selected_items(f2g_to_item);
+				});
+				listview.page.add_button(__("Sync To F2G"), function() {
+					frappe.call({
+						method: 'enci.f2g.doctype.furniture_to_go_products.furniture_to_go_products.sync_all_f2g_products',
+						args: {
+		
+						},
+						// disable the button until the request is completed
+						// btn: $('.primary-action'),
+						// freeze the screen until the request is completed
+						freeze: false,
+						callback: (r) => {
+							return true;
+							// on success
+						},
+						error: (r) => {
+							// on error
+						}
+					})
+				});
+			}
+    	})
+		
 
 		const main_layout = cur_page.page.querySelector('.container')
 		frappe.realtime.on("f2g_products_sync", function(data) {

@@ -12,10 +12,12 @@ from enci import publish_progress
 from enci.erpnext_custom_integrations.custom.item import create_item_box, add_item_box_to_item
 from enci.f2g.doctype.furniture_to_go_product_group.f2g_product_group import group_dict
 
-
-user_details = frappe.get_doc('Furniture To Go Settings')
-f2g_ins = f2g.F2G()
-f2g_ins.login(user_details.user_name, user_details.get_password('password'))
+try:
+    user_details = frappe.get_doc('Furniture To Go Settings')
+    f2g_ins = f2g.F2G()
+    f2g_ins.login(user_details.user_name, user_details.get_password('password'))
+except:
+    pass
 
 def get_web_image(file_url, filename=None):
 	# download
