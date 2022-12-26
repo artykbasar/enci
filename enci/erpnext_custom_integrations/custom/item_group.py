@@ -2,6 +2,7 @@
 import frappe
 import pandas as pd
 from frappe.utils import (cint, now)
+from enci import backgroud_jobs_check
 from enci import publish_progress
 
 
@@ -40,7 +41,7 @@ def add_item_group_values_from_csv(doc):
                 time_stamp = now()
                 sql_query = f"""
                                 INSERT INTO `tabItem Group` (`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `parent`, `parentfield`, `parenttype`, `idx`, `item_group_name`, `parent_item_group`, `is_group`, `image`, `show_in_website`, `route`, `weightage`, `slideshow`, `website_title`, `description`, `lft`, `rgt`, `old_parent`, `_user_tags`, `_comments`, `_assign`, `_liked_by`, `item_group_id`, `amazon_node_id`, `amazon_node_path`, `include_descendants`) VALUES
-                                ("{row['name']}", "{time_stamp}", "{time_stamp}", 'Administrator', 'Administrator', {row["docstatus"]}, NULL, NULL, NULL, {row["idx"]}, "{row["item_group_name"]}", "{row["parent_item_group"]}", {row["is_group"]}, NULL, {row["show_in_website"]}, "{row["route"]}", {row["weightage"]}, NULL, "{row["website_title"]}", NULL, {row["lft"]}, {row["rgt"]}, "{row["old_parent"]}", NULL, NULL, NULL, NULL, "{row["item_group_id"]}", "{row["amazon_node_id"]}", "{row["amazon_node_path"]}", "0");
+                                ("{row['name']}", "{time_stamp}", "{time_stamp}", 'Administrator', 'Administrator', {row["docstatus"]}, NULL, NULL, NULL, {row["idx"]}, "{row["item_group_name"]}", "{row["parent_item_group"]}", {row["is_group"]}, NULL, {row["show_in_website"]}, "{row["route"]}", {row["weightage"]}, NULL, "{row["website_title"]}", NULL, {row["lft"]}, {row["rgt"]}, "{row["old_parent"]}", NULL, NULL, NULL, NULL, "{row["item_group_id"]}", "{row["amazon_node_id"]}", "{row["amazon_node_path"]}", 0);
                             """
                 uploaded = True
                 while uploaded:
@@ -56,6 +57,60 @@ def add_item_group_values_from_csv(doc):
             else:
                 publish_progress(doc.doctype, id, index+1, progress_total,
                                  f"{row['item_group_id']} \n already exists in DB")
+        doc.item_group_presets = 1
+        doc.save()
+
+
+def add_item_group_values_from_csv_with_doctype(doc):
+    if not cint(doc.item_group_presets or 0):
+        after_migrate_item_group_edit()
+        df = pd.read_csv("assets/enci/tabItem_Group.csv")
+        ig_doc = frappe.get_all("Item Group", fields=[
+            "name", "lft", "rgt"], order_by="lft")
+        main_ig = ig_doc[0]
+        add_n = main_ig['rgt'] - main_ig['lft']
+        main_ig_rgt = df.loc[df["lft"] == 1]['rgt'].iloc[0] + add_n + 1
+        df.loc[df["lft"] == 1, ["parent", "parent_item_group",
+                                "old_parent"]] = main_ig["name"]
+        df['rgt'] = df['rgt'] + add_n
+        df['lft'] = df['lft'] + add_n
+        df.sort_values(by="lft", inplace=True)
+        df.reset_index(inplace=True, drop=True)
+        progress_total = len(df)
+        id = "sql_import_progress"
+        function_path = "enci.erpnext_custom_integrations.custom.item_group.add_item_group"
+        backgroud_jobs_check(function_path)
+        for index, row in df.iterrows():
+            frappe.enqueue(function_path, timeout=30000, queue="long",
+                           row=row, index=index, progress_total=progress_total, id=id, doc=doc)
+
+
+def add_item_group(row, index, progress_total, id, doc):
+    existance_check = frappe.db.exists('Item Group', row['name'])
+    if not existance_check:
+        new_doc = frappe.new_doc("Item Group")
+        new_doc.item_group_name = row['item_group_name']
+        new_doc.item_group_id = row['item_group_id']
+        new_doc.parent_item_group = row['parent_item_group']
+        new_doc.is_group = row['is_group']
+        new_doc.amazon_node_id = row['amazon_node_id']
+        if pd.notna(row['amazon_node_path']):
+            new_doc.amazon_node_path = row['amazon_node_path']
+        uploaded = True
+        while uploaded:
+            try:
+                new_doc.insert(ignore_permissions=True)
+                uploaded = False
+            except Exception as e:
+                publish_progress(
+                    doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n {e}")
+                uploaded = False
+        publish_progress(doc.doctype, id, index+1, progress_total,
+                         f"{row['item_group_id']} \n Has been added to DB")
+    else:
+        publish_progress(doc.doctype, id, index+1, progress_total,
+                         f"{row['item_group_id']} \n already exists in DB")
+    if progress_total == index+1:
         doc.item_group_presets = 1
         doc.save()
 
