@@ -1,8 +1,8 @@
 from bs4.builder import TreeBuilder
 import frappe
-from erpnext.stock.doctype.item.item import (Item, 
-    strip,
-    make_variant_item_code)
+from erpnext.stock.doctype.item.item import (Item,
+                                             strip,
+                                             make_variant_item_code)
 from frappe.utils import cint
 
 
@@ -11,16 +11,18 @@ class ENCIItem(Item):
         if frappe.db.get_default("item_naming_by") == "Naming Series":
             if self.variant_of:
                 if not self.item_code:
-                    template_item_name = frappe.db.get_value("Item", self.variant_of, "item_name")
-                    make_variant_item_code(self.variant_of, template_item_name, self)
+                    template_item_name = frappe.db.get_value(
+                        "Item", self.variant_of, "item_name")
+                    make_variant_item_code(
+                        self.variant_of, template_item_name, self)
             else:
-                from enci.erpnext_custom_integrations.custom.naming_series import set_name_by_naming_series
+                from enci.erpnext_custom_integrations.custom.document_naming_settings.naming import set_name_by_naming_series
                 set_name_by_naming_series(self)
                 self.item_code = self.name
 
         self.item_code = strip(self.item_code)
         self.name = self.item_code
-    
+
     def validate(self):
         org_validate = super(ENCIItem, self).validate()
         self.full_item_code = f"{self.brand_id}{self.item_group_id}{self.item_code}"
@@ -29,15 +31,16 @@ class ENCIItem(Item):
     def on_trash(self):
         self.unlink_f2g_on_delete()
         return super(ENCIItem, self).on_trash()
-    
+
     def unlink_f2g_on_delete(self):
-        f2g_check = frappe.db.get_list("Furniture To Go Products", 
-                        filters={'item': self.name}, fields=['name'])
+        f2g_check = frappe.db.get_list("Furniture To Go Products",
+                                       filters={'item': self.name}, fields=['name'])
         if f2g_check:
             for each in f2g_check:
-                frappe.db.set_value("Furniture To Go Products", each['name'], {'item': ''})
+                frappe.db.set_value("Furniture To Go Products",
+                                    each['name'], {'item': ''})
 
-    
+
 def after_migrate_item_edit():
     create_item_box()
     add_item_box_to_item()
@@ -49,7 +52,8 @@ def after_migrate_item_edit():
 
 
 def add_full_item_code():
-    full_item_item_code_check = frappe.db.exists('Custom Field', 'Item-full_item_code')
+    full_item_item_code_check = frappe.db.exists(
+        'Custom Field', 'Item-full_item_code')
     if not full_item_item_code_check:
         doc = frappe.new_doc('Custom Field')
         doc.dt = 'Item'
@@ -97,7 +101,7 @@ def set_stock_settings_defaults():
     if not doc.allow_negative_stock:
         doc.allow_negative_stock = 1
         save_trigger = True
-    # Setting Barcode Section as visiable  
+    # Setting Barcode Section as visiable
     if not doc.show_barcode_field:
         doc.show_barcode_field = 1
         save_trigger = True
@@ -106,10 +110,10 @@ def set_stock_settings_defaults():
 
 
 def set_item_code_format():
-    doc = frappe.get_doc("Naming Series")
-    doc.select_doc_for_series = "Item"
+    doc = frappe.get_doc("Document Naming Settings")
+    doc.transaction_type = "Item"
     if doc.get_options() != ".#######[Hash]":
-        doc.set_options = ".#######[Hash]"
+        doc.naming_series_options = ".#######[Hash]"
         doc.update_series()
 
 
@@ -123,7 +127,8 @@ def set_item_code_to_naming_series():
 def add_item_box_to_item():
     item_box_check = frappe.db.exists('DocType', 'Item Box')
     item_box_check_in_item = frappe.db.exists('Custom Field', 'Item-item_box')
-    sb_item_box_check_in_item = frappe.db.exists('Custom Field', 'Item-item_box_sb')
+    sb_item_box_check_in_item = frappe.db.exists(
+        'Custom Field', 'Item-item_box_sb')
     frappe.db.exists('Custom Field', 'Item-item_box')
     if item_box_check:
         if item_box_check_in_item:
@@ -163,65 +168,65 @@ def create_item_box():
         doc.editable_grid = 1
         doc.track_views = 1
         doc.custom = 1
-        doc.append('fields', 
-                {"label":"Box Number",
-                "fieldtype": "Data",
-                'fieldname': 'box_number',
-                'in_list_view': 1,
-                'columns': 1
-            })
         doc.append('fields',
-                {"label": "EAN",
-                "fieldtype": "Barcode",
-                'fieldname': 'box_ean',
-                'in_list_view': 1,
-                'columns': 2
-            })
+                   {"label": "Box Number",
+                    "fieldtype": "Data",
+                    'fieldname': 'box_number',
+                    'in_list_view': 1,
+                    'columns': 1
+                    })
         doc.append('fields',
-                {"label": "UPC",
-                "fieldtype": "Barcode",
-                'fieldname': 'box_upc',
-                'in_list_view': 1,
-                'columns': 2
-            })
+                   {"label": "EAN",
+                    "fieldtype": "Barcode",
+                    'fieldname': 'box_ean',
+                    'in_list_view': 1,
+                    'columns': 2
+                    })
         doc.append('fields',
-                {"label": "Height",
-                "fieldtype": "Float",
-                'precision': 1,
-               'fieldname': 'box_height',
-                'in_list_view': 1,
-                'columns': 1
-            })
+                   {"label": "UPC",
+                    "fieldtype": "Barcode",
+                    'fieldname': 'box_upc',
+                    'in_list_view': 1,
+                    'columns': 2
+                    })
         doc.append('fields',
-                {"label": "Width",
-                "fieldtype": "Float",
-                'precision': 1,
-                'fieldname': 'box_width',
-                'in_list_view': 1,
-                'columns': 1
-            })
+                   {"label": "Height",
+                    "fieldtype": "Float",
+                    'precision': 1,
+                    'fieldname': 'box_height',
+                    'in_list_view': 1,
+                    'columns': 1
+                    })
         doc.append('fields',
-                {"label": "Depth",
-                "fieldtype": "Float",
-                'precision': 1,
-                'fieldname': 'box_depth',
-                'in_list_view': 1,
-                'columns': 1
-            })
+                   {"label": "Width",
+                    "fieldtype": "Float",
+                    'precision': 1,
+                    'fieldname': 'box_width',
+                    'in_list_view': 1,
+                    'columns': 1
+                    })
         doc.append('fields',
-                {"label": "Unit",
-                "fieldtype": "Data",
-                'fieldname': 'box_dim_unit',
-                'in_list_view': 1,
-                'columns': 1
-            })
+                   {"label": "Depth",
+                    "fieldtype": "Float",
+                    'precision': 1,
+                    'fieldname': 'box_depth',
+                    'in_list_view': 1,
+                    'columns': 1
+                    })
         doc.append('fields',
-                {"label": "Weight",
-                "fieldtype": "Float",
-                'precision': 3,
-                'fieldname': 'box_weight',
-                'in_list_view': 1,
-                'columns': 1
-            })
+                   {"label": "Unit",
+                    "fieldtype": "Data",
+                    'fieldname': 'box_dim_unit',
+                    'in_list_view': 1,
+                    'columns': 1
+                    })
+        doc.append('fields',
+                   {"label": "Weight",
+                    "fieldtype": "Float",
+                    'precision': 3,
+                    'fieldname': 'box_weight',
+                    'in_list_view': 1,
+                    'columns': 1
+                    })
         doc.document_type = 'Document'
         doc.insert(ignore_permissions=True)

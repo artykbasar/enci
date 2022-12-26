@@ -48,18 +48,18 @@ web_include_css = "/assets/enci/css/whitelabel_web.css"
 
 # website user home page (by Role)
 # role_home_page = {
-#	"Role": "home_page"
+# "Role": "home_page"
 # }
 
 website_context = {
-	"favicon": "/assets/enci/images/home.png",
-	"splash_image": "/assets/enci/images/home.png"
+    "favicon": "/assets/enci/images/home.png",
+    "splash_image": "/assets/enci/images/home.png"
 }
-after_migrate = ['enci.api.whitelabel_patch', 
-				'enci.erpnext_custom_integrations.custom.item_group.after_migrate_item_group_edit',
-				'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit',
-				'enci.erpnext_custom_integrations.custom.brand.after_migrate_brand_edit',
-				'enci.erpnext_custom_integrations.custom.file.after_migrate_file_edit']
+after_migrate = ['enci.api.whitelabel_patch',
+                 'enci.erpnext_custom_integrations.custom.item_group.after_migrate_item_group_edit',
+                 'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit',
+                 'enci.erpnext_custom_integrations.custom.brand.after_migrate_brand_edit',
+                 'enci.erpnext_custom_integrations.custom.file.after_migrate_file_edit']
 
 # Generators
 # ----------
@@ -105,10 +105,10 @@ after_migrate = ['enci.api.whitelabel_patch',
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Naming Series": "enci.erpnext_custom_integrations.custom.naming_series.ENCINamingSeries",
-	"Item": "enci.erpnext_custom_integrations.custom.item.ENCIItem",
-	"Brand": "enci.erpnext_custom_integrations.custom.brand.ENCIBrand",
-	"File": "enci.erpnext_custom_integrations.custom.file.ENCIFile"
+    "Document Naming Settings": "enci.erpnext_custom_integrations.custom.document_naming_settings.document_naming_settings.DocumentNamingSettings",
+    "Item": "enci.erpnext_custom_integrations.custom.item.ENCIItem",
+    "Brand": "enci.erpnext_custom_integrations.custom.brand.ENCIBrand",
+    "File": "enci.erpnext_custom_integrations.custom.file.ENCIFile"
 }
 
 # Document Events
@@ -120,7 +120,7 @@ override_doctype_class = {
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
-#	}
+# }
 # }
 
 # Scheduled Tasks
@@ -128,15 +128,15 @@ override_doctype_class = {
 
 scheduler_events = {
 
-	"all": [
-		# "enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.tester"
-	],
-	"daily": [],
-	"hourly": [
-		"enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.scheduled_sync"
-	],
-	"weekly": [],
-	"monthly": []
+    "all": [
+        # "enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.tester"
+    ],
+    "daily": [],
+    "hourly": [
+        "enci.f2g.doctype.furniture_to_go_settings.furniture_to_go_methods.scheduled_sync"
+    ],
+    "weekly": [],
+    "monthly": []
 }
 
 boot_session = "enci.api.boot_session"
@@ -197,10 +197,10 @@ boot_session = "enci.api.boot_session"
 # ]
 
 override_whitelisted_methods = {
-	"frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
+    "frappe.utils.change_log.show_update_popup": "enci.api.ignore_update_popup"
 }
 
 fixtures = [
-	"Brand",
-	"Furniture To Go Range"
+    "Brand",
+    "Furniture To Go Range"
 ]

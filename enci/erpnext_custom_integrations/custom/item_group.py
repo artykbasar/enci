@@ -21,11 +21,13 @@ def add_item_group_values_from_csv(doc):
     if not cint(doc.item_group_presets or 0):
         after_migrate_item_group_edit()
         df = pd.read_csv("assets/enci/tabItem_Group.csv")
-        ig_doc = frappe.get_all("Item Group", fields=["name", "lft", "rgt"], order_by="lft")
+        ig_doc = frappe.get_all("Item Group", fields=[
+                                "name", "lft", "rgt"], order_by="lft")
         main_ig = ig_doc[0]
         add_n = main_ig['rgt'] - main_ig['lft']
         main_ig_rgt = df.loc[df["lft"] == 1]['rgt'].iloc[0] + add_n + 1
-        df.loc[df["lft"] == 1, ["parent", "parent_item_group", "old_parent"]] = main_ig["name"]
+        df.loc[df["lft"] == 1, ["parent", "parent_item_group",
+                                "old_parent"]] = main_ig["name"]
         df['rgt'] = df['rgt'] + add_n
         df['lft'] = df['lft'] + add_n
         df.sort_values(by="lft", inplace=True)
@@ -37,8 +39,8 @@ def add_item_group_values_from_csv(doc):
             if not existance_check:
                 time_stamp = now()
                 sql_query = f"""
-                                INSERT INTO `tabItem Group` (`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `parent`, `parentfield`, `parenttype`, `idx`, `item_group_name`, `parent_item_group`, `is_group`, `image`, `show_in_website`, `route`, `weightage`, `slideshow`, `website_title`, `description`, `lft`, `rgt`, `old_parent`, `_user_tags`, `_comments`, `_assign`, `_liked_by`, `item_group_id`, `amazon_node_id`, `amazon_node_path`) VALUES
-                                ("{row['name']}", "{time_stamp}", "{time_stamp}", 'Administrator', 'Administrator', {row["docstatus"]}, NULL, NULL, NULL, {row["idx"]}, "{row["item_group_name"]}", "{row["parent_item_group"]}", {row["is_group"]}, NULL, {row["show_in_website"]}, "{row["route"]}", {row["weightage"]}, NULL, "{row["website_title"]}", NULL, {row["lft"]}, {row["rgt"]}, "{row["old_parent"]}", NULL, NULL, NULL, NULL, "{row["item_group_id"]}", "{row["amazon_node_id"]}", "{row["amazon_node_path"]}");
+                                INSERT INTO `tabItem Group` (`name`, `creation`, `modified`, `modified_by`, `owner`, `docstatus`, `parent`, `parentfield`, `parenttype`, `idx`, `item_group_name`, `parent_item_group`, `is_group`, `image`, `show_in_website`, `route`, `weightage`, `slideshow`, `website_title`, `description`, `lft`, `rgt`, `old_parent`, `_user_tags`, `_comments`, `_assign`, `_liked_by`, `item_group_id`, `amazon_node_id`, `amazon_node_path`, `include_descendants`) VALUES
+                                ("{row['name']}", "{time_stamp}", "{time_stamp}", 'Administrator', 'Administrator', {row["docstatus"]}, NULL, NULL, NULL, {row["idx"]}, "{row["item_group_name"]}", "{row["parent_item_group"]}", {row["is_group"]}, NULL, {row["show_in_website"]}, "{row["route"]}", {row["weightage"]}, NULL, "{row["website_title"]}", NULL, {row["lft"]}, {row["rgt"]}, "{row["old_parent"]}", NULL, NULL, NULL, NULL, "{row["item_group_id"]}", "{row["amazon_node_id"]}", "{row["amazon_node_path"]}", "0");
                             """
                 uploaded = True
                 while uploaded:
@@ -46,11 +48,14 @@ def add_item_group_values_from_csv(doc):
                         frappe.db.sql(sql_query, ignore_ddl=True)
                         uploaded = False
                     except Exception as e:
-                        publish_progress(doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n {e}")
+                        publish_progress(
+                            doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n {e}")
                         uploaded = False
-                publish_progress(doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n Has been added to DB")
+                publish_progress(doc.doctype, id, index+1, progress_total,
+                                 f"{row['item_group_id']} \n Has been added to DB")
             else:
-                publish_progress(doc.doctype, id, index+1, progress_total, f"{row['item_group_id']} \n already exists in DB")
+                publish_progress(doc.doctype, id, index+1, progress_total,
+                                 f"{row['item_group_id']} \n already exists in DB")
         doc.item_group_presets = 1
         doc.save()
 
@@ -81,13 +86,17 @@ def extend_route_length_250():
         if field.fieldname == "route" and field.length != 250:
             field.length = 250
     doc.save_customization()
-    
+
 
 def add_custom_fields():
-    item_group_id_check = frappe.db.exists('Custom Field', 'Item Group-item_group_id')
-    amazon_node_id_check = frappe.db.exists('Custom Field', 'Item Group-amazon_node_id') 
-    amazon_node_path_check = frappe.db.exists('Custom Field', 'Item Group-amazon_node_path')
-    item_group_id_on_item_check = frappe.db.exists('Custom Field', 'Item-item_group_id')
+    item_group_id_check = frappe.db.exists(
+        'Custom Field', 'Item Group-item_group_id')
+    amazon_node_id_check = frappe.db.exists(
+        'Custom Field', 'Item Group-amazon_node_id')
+    amazon_node_path_check = frappe.db.exists(
+        'Custom Field', 'Item Group-amazon_node_path')
+    item_group_id_on_item_check = frappe.db.exists(
+        'Custom Field', 'Item-item_group_id')
     if not item_group_id_check:
         doc = frappe.new_doc('Custom Field')
         doc.dt = "Item Group"
@@ -135,5 +144,3 @@ def add_custom_fields():
         item_group_id_doc.length = 4
         item_group_id_doc.reqd = 0
         item_group_id_doc.insert(ignore_permissions=True)
-
-

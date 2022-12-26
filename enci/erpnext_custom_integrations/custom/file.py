@@ -1,5 +1,6 @@
 import frappe
-from frappe.core.doctype.file.file import (File, MaxFileSizeReachedError, _, cint, conf)
+from frappe.core.doctype.file.file import (File, MaxFileSizeReachedError, _, cint)
+from frappe import conf
 
 
 
