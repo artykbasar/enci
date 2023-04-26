@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict, List
 
 from rq import Queue, Worker
 
-from frappe.utils import convert_utc_to_user_timezone, format_datetime
+from frappe.utils.data import convert_utc_to_system_timezone, format_datetime
 from frappe.utils.background_jobs import get_redis_conn
 from frappe.utils.scheduler import is_scheduler_inactive
 
@@ -40,7 +40,7 @@ def get_info(show_failed=False) -> List[Dict]:
 					or str(job.kwargs.get('job_name')),
 				'status': job.get_status(),
 				'queue': name,
-				'creation': format_datetime(convert_utc_to_user_timezone(job.created_at)),
+				'creation': format_datetime(convert_utc_to_system_timezone(job.created_at)),
 				'color': JOB_COLORS[job.get_status()]
 			}
 
