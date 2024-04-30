@@ -5,7 +5,7 @@
 import frappe
 from frappe import _
 from frappe.core.doctype.doctype.doctype import validate_series
-from frappe.model.document import Document
+from frappe.core.doctype.document_naming_settings.document_naming_settings import DocumentNamingSettings
 from enci.erpnext_custom_integrations.custom.document_naming_settings.naming import NamingSeries
 from frappe.permissions import get_doctypes_with_read
 
@@ -14,7 +14,7 @@ class NamingSeriesNotSetError(frappe.ValidationError):
     pass
 
 
-class DocumentNamingSettings(Document):
+class DocumentNamingSettings(DocumentNamingSettings):
     @frappe.whitelist()
     def get_transactions_and_prefixes(self):
 
