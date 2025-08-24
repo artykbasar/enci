@@ -51,11 +51,13 @@ website_context = {
     "favicon": "/assets/enci/images/home.png",
     "splash_image": "/assets/enci/images/home.png"
 }
-after_migrate = ['enci.api.whitelabel_patch',
-                 'enci.erpnext_custom_integrations.custom.item_group.after_migrate_item_group_edit',
-                 'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit',
-                 'enci.erpnext_custom_integrations.custom.brand.after_migrate_brand_edit',
-                 'enci.erpnext_custom_integrations.custom.file.after_migrate_file_edit']
+after_migrate = [
+	# 'enci.api.whitelabel_patch',
+	'enci.erpnext_custom_integrations.custom.item_group.after_migrate_item_group_edit',
+	'enci.erpnext_custom_integrations.custom.item.after_migrate_item_edit',
+	'enci.erpnext_custom_integrations.custom.brand.after_migrate_brand_edit',
+	'enci.erpnext_custom_integrations.custom.file.after_migrate_file_edit'
+]
 
 # Generators
 # ----------
