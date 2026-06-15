@@ -110,7 +110,7 @@ def set_stock_settings_defaults():
 
 
 def set_item_code_format():
-    doc = frappe.get_doc("Document Naming Settings")
+    doc = frappe.get_single("Document Naming Settings")
     doc.transaction_type = "Item"
     if doc.get_options() != ".#######[Hash]":
         doc.naming_series_options = ".#######[Hash]"
